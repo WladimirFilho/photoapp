@@ -5,7 +5,9 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  StatusBar,
   View,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
@@ -14,6 +16,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../../firebase/Config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Signin = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -41,7 +44,8 @@ const Signin = ({ navigation }) => {
       await updateProfile(user, { displayName: username });
       setLoading(false);
     } catch (error) {
-      alert(error.message);
+      console.log(error);
+      // alert(error.message);
       setLoading(false);
     }
   };
@@ -63,84 +67,87 @@ const Signin = ({ navigation }) => {
     return;
   };
 
+
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: Platform.OS === "android" ? 200 : 0,
-        },
-      ]}
-      behavior="padding"
-    >
-      <Text style={styles.title}>Sign In</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="User Name"
-          value={username}
-          onChangeText={(text) => {
-            setUsername(text);
-          }}
-        />
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
-          }}
-        />
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-          }}
-          secureTextEntry
-        />
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={(text) => {
-            setConfirmPassword(text);
-          }}
-          secureTextEntry
-        />
-      </View>
-      {loading ? (
-        <View
-          style={[
-            styles.loginBtnContainer,
-            styles.shadowProps,
-            { width: "90%", justifyContent: "center" },
-          ]}
+    <SafeAreaView>
+      <ScrollView>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <Text style={styles.loginBtnText}>Loading...</Text>
-        </View>
-      ) : (
-        <Pressable
-          style={{ width: "90%", justifyContent: "center" }}
-          onPress={signinHandler}
-        >
-          <View style={[styles.loginBtnContainer, styles.shadowProps]}>
-            <Text style={styles.loginBtnText}>Sign In</Text>
+          <Text style={styles.title}>Sign In</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="User Name"
+              value={username}
+              onChangeText={(text) => {
+                setUsername(text);
+              }}
+            />
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+              }}
+            />
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+              }}
+              secureTextEntry
+            />
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChangeText={(text) => {
+                setConfirmPassword(text);
+              }}
+              secureTextEntry
+            />
           </View>
-        </Pressable>
-      )}
-      <View style={styles.signinBtnContainer}>
-        <Text style={styles.signinText}>Have an account?</Text>
-        <Pressable
-          onPress={() => {
-            navigation.navigate("Login");
-          }}
-        >
-          <Text style={[styles.signinText, { color: "#ff6969" }]}> Log In</Text>
-        </Pressable>
-      </View>
-    </View>
+          {loading ? (
+            <View
+              style={[
+                styles.loginBtnContainer,
+                styles.shadowProps,
+                { width: "90%", justifyContent: "center" },
+              ]}
+            >
+              <Text style={styles.loginBtnText}>Loading...</Text>
+            </View>
+          ) : (
+            <Pressable
+              style={{ width: "90%", justifyContent: "center" }}
+              onPress={signinHandler}
+            >
+              <View style={[styles.loginBtnContainer, styles.shadowProps]}>
+                <Text style={styles.loginBtnText}>Sign In</Text>
+              </View>
+            </Pressable>
+          )}
+          <View style={styles.signinBtnContainer}>
+            <Text style={styles.signinText}>Have an account?</Text>
+            <Pressable
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+            >
+              <Text style={[styles.signinText, { color: "#ff6969" }]}>
+                {" "}
+                Log In
+              </Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -152,6 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   title: {
     color: "#515C6F",

@@ -37,13 +37,8 @@ const Login = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={[
-        styles.container,
-        {
-          marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-        },
-      ]}
-      behavior="padding"
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Text style={styles.title}>Log In</Text>
       <View style={styles.inputContainer}>
@@ -110,6 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   title: {
     color: "#515C6F",
