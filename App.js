@@ -17,12 +17,12 @@ export default function App() {
           name="Login"
           component={Login}
           options={{ headerShown: false }}
-        /> */}
+        />
         <Stack.Screen
           name="Signin"
           component={Signin}
           options={{ headerShown: false }}
-        />
+        /> */}
         <Stack.Screen
           name="Home"
           component={HomeScreen}
