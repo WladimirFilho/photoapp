@@ -11,26 +11,24 @@ import React, { useEffect } from "react";
 import { auth, logout } from "../firebase/Config";
 import cam from "../assets/images/cam.png";
 import pic from "../assets/images/pic.png";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Home = ({ navigation }) => {
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (!user) {
-  //       navigation.navigate("Login");
-  //     }
-  //   });
-  // }, [auth]);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigation.navigate("Login");
+      }
+    });
+  }, [auth]);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      {/* <Pressable onPress={logout}>
+    <SafeAreaView style={styles.container}>
+      <Pressable onPress={logout}>
         <View>
           <Text>Logout</Text>
         </View>
-      </Pressable> */}
+      </Pressable>
 
       <Pressable
         style={{ width: "60%" }}
@@ -62,7 +60,7 @@ const Home = ({ navigation }) => {
           </Text>
         </View>
       </Pressable>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 

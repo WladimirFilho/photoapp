@@ -6,10 +6,13 @@ import {
   TextInput,
   View,
   StatusBar,
+  ScrollView,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/Config";
+//import { SafeAreaView } from "react-native-safe-area-context";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -36,64 +39,65 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <Text style={styles.title}>Log In</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
-          }}
-        />
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-          }}
-          secureTextEntry
-        />
-      </View>
-      {loading ? (
-        <View
-          style={[
-            styles.loginBtnContainer,
-            styles.shadowProps,
-            { width: "90%", justifyContent: "center" },
-          ]}
-        >
-          <Text style={styles.loginBtnText}>Loading...</Text>
-        </View>
-      ) : (
-        <Pressable
-          style={{ width: "90%", justifyContent: "center" }}
-          onPress={loginHandler}
-        >
-          <View style={[styles.loginBtnContainer, styles.shadowProps]}>
-            <Text style={styles.loginBtnText}>Log In</Text>
+    <SafeAreaView>
+      <ScrollView>
+        <KeyboardAvoidingView style={styles.container} behavior={"padding"}>
+          <Text style={styles.title}>Log In</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+              }}
+            />
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+              }}
+              secureTextEntry
+            />
           </View>
-        </Pressable>
-      )}
-      <View style={styles.signinBtnContainer}>
-        <Text style={styles.signinText}>Dont have an account?</Text>
-        <Pressable
-          onPress={() => {
-            navigation.navigate("Signin");
-          }}
-        >
-          <Text style={[styles.signinText, { color: "#ff6969" }]}>
-            {" "}
-            Sing In
-          </Text>
-        </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+          {loading ? (
+            <View
+              style={[
+                styles.loginBtnContainer,
+                styles.shadowProps,
+                { width: "90%", justifyContent: "center" },
+              ]}
+            >
+              <Text style={styles.loginBtnText}>Loading...</Text>
+            </View>
+          ) : (
+            <Pressable
+              style={{ width: "90%", justifyContent: "center" }}
+              onPress={loginHandler}
+            >
+              <View style={[styles.loginBtnContainer, styles.shadowProps]}>
+                <Text style={styles.loginBtnText}>Log In</Text>
+              </View>
+            </Pressable>
+          )}
+          <View style={styles.signinBtnContainer}>
+            <Text style={styles.signinText}>Dont have an account?</Text>
+            <Pressable
+              onPress={() => {
+                navigation.navigate("Signin");
+              }}
+            >
+              <Text style={[styles.signinText, { color: "#ff6969" }]}>
+                {" "}
+                Sing In
+              </Text>
+            </Pressable>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

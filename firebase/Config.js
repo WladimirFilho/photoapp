@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, connectAuthEmulator, signOut } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -30,4 +30,6 @@ export const auth = getAuth(app);
 export const logout = () => {
   signOut(auth);
 };
+//connectAuthEmulator(auth, "192.168.1.109:19000");
+//connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
 export const storage = getStorage(app);

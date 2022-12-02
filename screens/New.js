@@ -6,18 +6,21 @@ import {
   View,
   TextInput,
   Image,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { auth, firestore, storage } from "../firebase/Config";
-import { collection } from "firebase/firestore";
+import { collection, Timestamp, addDoc } from "firebase/firestore";
 
-const New = () => {
+const New = ({ navigation }) => {
   const [image, setImage] = useState();
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(0);
 
   const imagePickerCall = async (type) => {
     let data;
@@ -37,7 +40,6 @@ const New = () => {
 
     setImage(data.assets[0]);
   };
-  console.log(image);
 
   const uploadImage = async () => {
     if (!image) {
@@ -48,13 +50,14 @@ const New = () => {
     const storageRef = ref(storage, generateName);
     const img = await fetch(image.uri);
     const bytes = await img.blob();
+
     const uploadTask = uploadBytesResumable(storageRef, bytes);
     uploadTask.on(
       "state_changed",
       (snapshot) => {
         const uploadProgress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(uploadProgress);
+        setLoading(uploadProgress);
       },
 
       (error) => {
@@ -64,6 +67,10 @@ const New = () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         createDocInCollection(url, generateName);
         alert("Uploaded successfully");
+        setDescription("");
+        setLocation("");
+        setImage(null);
+        setLoading(0);
       }
     );
   };
@@ -80,81 +87,104 @@ const New = () => {
     };
     const collectionRef = collection(firestore, "post");
     await addDoc(collectionRef, data);
-    setImage();
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.navbar}>
-        <Pressable>
-          <Icon name="arrow-back-ios" size={30} style={{ color: "#FF6969" }} />
-        </Pressable>
-        <Text style={{ fontSize: 25, fontWeight: "700", color: "#FF6969" }}>
-          New
-        </Text>
-      </View>
+    <SafeAreaView>
+      <ScrollView>
+        <KeyboardAvoidingView style={styles.container} behavior={"padding"}>
+          <View style={styles.navbar}>
+            <Pressable
+              onPress={() => {
+                navigation.goBack();
+              }}
+            >
+              <Icon
+                name="arrow-back-ios"
+                size={30}
+                style={{ color: "#FF6969" }}
+              />
+            </Pressable>
+            <Text style={{ fontSize: 25, fontWeight: "700", color: "#FF6969" }}>
+              New
+            </Text>
+          </View>
 
-      {image ? (
-        <Image source={{ uri: image.uri }} style={styles.previewImage} />
-      ) : null}
-      <View style={{ flexDirection: "row" }}>
-        <Pressable
-          style={styles.buttonsContainer}
-          onPress={() => {
-            imagePickerCall("camera");
-          }}
-        >
-          <Icon name="add-a-photo" size={30} style={{ color: "#FF6969" }} />
-          <Text style={styles.buttonsTexts}>Take a Picture</Text>
-        </Pressable>
-        <Pressable
-          style={styles.buttonsContainer}
-          onPress={() => {
-            imagePickerCall("gallery");
-          }}
-        >
-          <Icon name="collections" size={30} style={{ color: "#FF6969" }} />
-          <Text style={styles.buttonsTexts}>Select from gallery</Text>
-        </Pressable>
-      </View>
-      <View style={styles.inputsContainer}>
-        <Text style={styles.inputsLabel}>Description</Text>
-        <TextInput
-          style={[
-            styles.input,
-            styles.shadowProps,
-            {
-              height: 200,
-              textAlignVertical: "top",
-              paddingTop: 15,
-              shadowOpacity: 0.1,
-            },
-          ]}
-          multiline={true}
-          numberOfLines={10}
-          placeholder="Write your description here..."
-        />
-      </View>
-      <View style={styles.inputsContainer}>
-        <Text style={styles.inputsLabel}>Location</Text>
-        <TextInput
-          style={[styles.input, styles.shadowProps]}
-          placeholder="Write your location here..."
-        />
-      </View>
-      <Pressable
-        onPress={uploadImage}
-        style={[styles.submitBtnContainer, styles.shadowProps]}
-      >
-        <Text style={styles.submitBtnText}>UPLOAD FILE</Text>
-        <View style={styles.submitBtnCircle}>
-          <Icon style={styles.submitBtn} name="arrow-forward-ios" size={20} />
-        </View>
-      </Pressable>
-    </KeyboardAvoidingView>
+          {image ? (
+            <Image source={{ uri: image.uri }} style={styles.previewImage} />
+          ) : null}
+          <View style={{ flexDirection: "row" }}>
+            <Pressable
+              style={styles.buttonsContainer}
+              onPress={() => {
+                imagePickerCall("camera");
+              }}
+            >
+              <Icon name="add-a-photo" size={30} style={{ color: "#FF6969" }} />
+              <Text style={styles.buttonsTexts}>Take a Picture</Text>
+            </Pressable>
+            <Pressable
+              style={styles.buttonsContainer}
+              onPress={() => {
+                imagePickerCall("gallery");
+              }}
+            >
+              <Icon name="collections" size={30} style={{ color: "#FF6969" }} />
+              <Text style={styles.buttonsTexts}>Select from gallery</Text>
+            </Pressable>
+          </View>
+          <View style={styles.inputsContainer}>
+            <Text style={styles.inputsLabel}>Description</Text>
+            <TextInput
+              style={[
+                styles.input,
+                styles.shadowProps,
+                {
+                  height: 200,
+                  textAlignVertical: "top",
+                  paddingTop: 15,
+                  shadowOpacity: 0.1,
+                },
+              ]}
+              multiline={true}
+              numberOfLines={10}
+              placeholder="Write your description here..."
+              value={description}
+              onChangeText={(text) => setDescription(text)}
+            />
+          </View>
+          <View style={styles.inputsContainer}>
+            <Text style={styles.inputsLabel}>Location</Text>
+            <TextInput
+              style={[styles.input, styles.shadowProps]}
+              placeholder="Write your location here..."
+              value={location}
+              onChangeText={(text) => setLocation(text)}
+            />
+          </View>
+          {loading > 0 ? (
+            <View style={[styles.submitBtnContainer, styles.shadowProps]}>
+              <Text style={styles.submitBtnText}>Loading..</Text>
+              <Text style={styles.submitBtnText}>{`${loading}%`}</Text>
+            </View>
+          ) : (
+            <Pressable
+              onPress={uploadImage}
+              style={[styles.submitBtnContainer, styles.shadowProps]}
+            >
+              <Text style={styles.submitBtnText}>UPLOAD FILE</Text>
+              <View style={styles.submitBtnCircle}>
+                <Icon
+                  style={styles.submitBtn}
+                  name="arrow-forward-ios"
+                  size={20}
+                />
+              </View>
+            </Pressable>
+          )}
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

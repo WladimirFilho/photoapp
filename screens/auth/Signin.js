@@ -19,8 +19,8 @@ import { auth } from "../../firebase/Config";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Signin = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -35,16 +35,18 @@ const Signin = ({ navigation }) => {
 
   const register = async () => {
     setLoading(true);
+    const userEmail = email;
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
-        email,
+        userEmail,
         password
       );
       await updateProfile(user, { displayName: username });
       setLoading(false);
     } catch (error) {
       console.log(error);
+      console.log(error.message);
       // alert(error.message);
       setLoading(false);
     }
@@ -67,14 +69,10 @@ const Signin = ({ navigation }) => {
     return;
   };
 
-
   return (
     <SafeAreaView>
       <ScrollView>
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+        <KeyboardAvoidingView style={styles.container} behavior={"padding"}>
           <Text style={styles.title}>Sign In</Text>
           <View style={styles.inputContainer}>
             <TextInput
