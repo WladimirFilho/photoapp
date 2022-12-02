@@ -7,16 +7,16 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { firestore } from "../firebase/Config";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { firestore } from '../firebase/Config';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 
 const Item = ({ username, location, id, navigation }) => (
   <Pressable
     style={styles.itemContainer}
-    onPress={() => navigation.navigate("Post", { itemId: id })}
+    onPress={() => navigation.navigate('Post', { itemId: id })}
   >
     <Text style={styles.itemText}>{username}</Text>
     <Text style={styles.itemLocation}>{location}</Text>
@@ -28,20 +28,19 @@ const Posts = ({ navigation }) => {
 
   useEffect(() => {
     const fetchData = () => {
-      const collectionRef = collection(firestore, "post");
-      const q = query(collectionRef, orderBy("createdAt", "desc"));
+      const collectionRef = collection(firestore, 'posts');
+      const q = query(collectionRef, orderBy('createdAt', 'desc'));
       onSnapshot(q, (querySnapshot) => {
         setDocuments(
           querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
-          }))
+          })),
         );
       });
     };
     fetchData();
   }, []);
-  console.log(documents);
 
   const renderItem = ({ item }) => {
     return (
@@ -59,9 +58,9 @@ const Posts = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.navbar}>
         <Pressable onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back-ios" size={30} style={{ color: "#FF6969" }} />
+          <Icon name='arrow-back-ios' size={30} style={{ color: '#FF6969' }} />
         </Pressable>
-        <Text style={{ fontSize: 25, fontWeight: "700", color: "#FF6969" }}>
+        <Text style={{ fontSize: 25, fontWeight: '700', color: '#FF6969' }}>
           Posts
         </Text>
       </View>
@@ -84,46 +83,46 @@ export default Posts;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "column",
-    justifyContent: "center",
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   navbar: {
-    width: "55%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginLeft: "5%",
+    width: '55%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: '5%',
   },
   itemContainer: {
     marginTop: 10,
-    backgroundColor: "#FF6969",
-    width: "90%",
-    marginRight: "auto",
-    marginLeft: "auto",
+    backgroundColor: '#FF6969',
+    width: '90%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
     borderRadius: 50,
     paddingVertical: 13,
     paddingHorizontal: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   itemText: {
-    textTransform: "uppercase",
-    fontWeight: "700",
-    color: "#fff",
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    color: '#fff',
   },
   itemLocation: {
-    color: "rgb(225,225,225)",
-    fontStyle: "italic",
+    color: 'rgb(225,225,225)',
+    fontStyle: 'italic',
     paddingLeft: 20,
   },
 
   text: {
     marginVertical: 20,
-    width: "90%",
-    marginRight: "auto",
-    marginLeft: "auto",
-    color: "#515C6F",
-    textAlign: "center",
+    width: '90%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    color: '#515C6F',
+    textAlign: 'center',
   },
 });

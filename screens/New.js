@@ -8,28 +8,28 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
-} from "react-native";
-import React, { useState } from "react";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import * as ImagePicker from "expo-image-picker";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { auth, firestore, storage } from "../firebase/Config";
-import { collection, Timestamp, addDoc } from "firebase/firestore";
+} from 'react-native';
+import React, { useState } from 'react';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { auth, firestore, storage } from '../firebase/Config';
+import { collection, Timestamp, addDoc } from 'firebase/firestore';
 
 const New = ({ navigation }) => {
   const [image, setImage] = useState();
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState('');
+  const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(0);
 
   const imagePickerCall = async (type) => {
     let data;
-    if (type === "camera") {
+    if (type === 'camera') {
       data = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
     }
-    if (type === "gallery") {
+    if (type === 'gallery') {
       data = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
@@ -43,7 +43,7 @@ const New = ({ navigation }) => {
 
   const uploadImage = async () => {
     if (!image) {
-      alert("Please select an image");
+      alert('Please select an image');
       return;
     }
     const generateName = `images/${Date.now()}.jpg`;
@@ -53,7 +53,7 @@ const New = ({ navigation }) => {
 
     const uploadTask = uploadBytesResumable(storageRef, bytes);
     uploadTask.on(
-      "state_changed",
+      'state_changed',
       (snapshot) => {
         const uploadProgress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -66,12 +66,12 @@ const New = ({ navigation }) => {
       async () => {
         const url = await getDownloadURL(uploadTask.snapshot.ref);
         createDocInCollection(url, generateName);
-        alert("Uploaded successfully");
-        setDescription("");
-        setLocation("");
+        alert('Uploaded successfully');
+        setDescription('');
+        setLocation('');
         setImage(null);
         setLoading(0);
-      }
+      },
     );
   };
 
@@ -85,14 +85,14 @@ const New = ({ navigation }) => {
       image: url,
       createdAt: Timestamp.now(),
     };
-    const collectionRef = collection(firestore, "post");
+    const collectionRef = collection(firestore, 'posts');
     await addDoc(collectionRef, data);
   };
 
   return (
     <SafeAreaView>
       <ScrollView>
-        <KeyboardAvoidingView style={styles.container} behavior={"padding"}>
+        <KeyboardAvoidingView style={styles.container} behavior={'padding'}>
           <View style={styles.navbar}>
             <Pressable
               onPress={() => {
@@ -100,12 +100,12 @@ const New = ({ navigation }) => {
               }}
             >
               <Icon
-                name="arrow-back-ios"
+                name='arrow-back-ios'
                 size={30}
-                style={{ color: "#FF6969" }}
+                style={{ color: '#FF6969' }}
               />
             </Pressable>
-            <Text style={{ fontSize: 25, fontWeight: "700", color: "#FF6969" }}>
+            <Text style={{ fontSize: 25, fontWeight: '700', color: '#FF6969' }}>
               New
             </Text>
           </View>
@@ -113,23 +113,23 @@ const New = ({ navigation }) => {
           {image ? (
             <Image source={{ uri: image.uri }} style={styles.previewImage} />
           ) : null}
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: 'row' }}>
             <Pressable
               style={styles.buttonsContainer}
               onPress={() => {
-                imagePickerCall("camera");
+                imagePickerCall('camera');
               }}
             >
-              <Icon name="add-a-photo" size={30} style={{ color: "#FF6969" }} />
+              <Icon name='add-a-photo' size={30} style={{ color: '#FF6969' }} />
               <Text style={styles.buttonsTexts}>Take a Picture</Text>
             </Pressable>
             <Pressable
               style={styles.buttonsContainer}
               onPress={() => {
-                imagePickerCall("gallery");
+                imagePickerCall('gallery');
               }}
             >
-              <Icon name="collections" size={30} style={{ color: "#FF6969" }} />
+              <Icon name='collections' size={30} style={{ color: '#FF6969' }} />
               <Text style={styles.buttonsTexts}>Select from gallery</Text>
             </Pressable>
           </View>
@@ -141,14 +141,14 @@ const New = ({ navigation }) => {
                 styles.shadowProps,
                 {
                   height: 200,
-                  textAlignVertical: "top",
+                  textAlignVertical: 'top',
                   paddingTop: 15,
                   shadowOpacity: 0.1,
                 },
               ]}
               multiline={true}
               numberOfLines={10}
-              placeholder="Write your description here..."
+              placeholder='Write your description here...'
               value={description}
               onChangeText={(text) => setDescription(text)}
             />
@@ -157,7 +157,7 @@ const New = ({ navigation }) => {
             <Text style={styles.inputsLabel}>Location</Text>
             <TextInput
               style={[styles.input, styles.shadowProps]}
-              placeholder="Write your location here..."
+              placeholder='Write your location here...'
               value={location}
               onChangeText={(text) => setLocation(text)}
             />
@@ -176,7 +176,7 @@ const New = ({ navigation }) => {
               <View style={styles.submitBtnCircle}>
                 <Icon
                   style={styles.submitBtn}
-                  name="arrow-forward-ios"
+                  name='arrow-forward-ios'
                   size={20}
                 />
               </View>
@@ -192,89 +192,89 @@ export default New;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "column",
-    justifyContent: "center",
-    marginTop: Platform.OS === "android" ? 50 : 0,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginTop: Platform.OS === 'android' ? 50 : 0,
   },
   navbar: {
-    width: "55%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginLeft: "5%",
+    width: '55%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: '5%',
   },
   previewImage: {
     width: 50,
     height: 50,
-    marginLeft: "auto",
-    marginRight: "auto",
+    marginLeft: 'auto',
+    marginRight: 'auto',
     marginTop: 15,
     borderRadius: 50,
   },
   buttonsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: "auto",
-    marginRight: "auto",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     marginTop: 15,
   },
   buttonsTexts: {
     fontSize: 15,
     paddingLeft: 10,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   inputsContainer: {
-    width: "90%",
+    width: '90%',
     marginTop: 15,
-    marginLeft: "auto",
-    marginRight: "auto",
-    flexDirection: "column",
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    flexDirection: 'column',
   },
   inputsLabel: {
-    color: "#515C6F",
+    color: '#515C6F',
   },
   input: {
     marginTop: 10,
     height: 60,
     borderRadius: 10,
-    color: "#515C6F",
+    color: '#515C6F',
     fontSize: 15,
     paddingTop: 5,
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 5,
-    backgroundColor: "rgb(235,235,235)",
+    backgroundColor: 'rgb(235,235,235)',
   },
 
   submitBtnContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     borderRadius: 50,
     padding: 8,
-    width: "50%",
+    width: '50%',
     marginTop: 25,
-    marginLeft: "auto",
-    marginRight: "auto",
-    backgroundColor: "#FF6969",
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    backgroundColor: '#FF6969',
   },
   submitBtnText: {
-    color: "white",
-    fontWeight: "700",
+    color: 'white',
+    fontWeight: '700',
     paddingLeft: 10,
   },
   submitBtnCircle: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 100,
     padding: 10,
   },
   submitBtn: {
-    color: "#FF6969",
+    color: '#FF6969',
   },
 
   shadowProps: {
-    shadowColor: "#171717",
+    shadowColor: '#171717',
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
